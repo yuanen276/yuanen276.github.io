@@ -17,37 +17,13 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 40px;
+            gap: 30px;
             background-color: #f9f9fa;
             background-image: 
-                repeating-linear-gradient(
-                    to right,
-                    #b0b0b0 0px,
-                    #b0b0b0 1px,
-                    transparent 1px,
-                    transparent 20px
-                ),
-                repeating-linear-gradient(
-                    to bottom,
-                    #b0b0b0 0px,
-                    #b0b0b0 1px,
-                    transparent 1px,
-                    transparent 20px
-                ),
-                repeating-linear-gradient(
-                    to right,
-                    #c0c0c0 0px,
-                    #c0c0c0 1px,
-                    transparent 1px,
-                    transparent 100px
-                ),
-                repeating-linear-gradient(
-                    to bottom,
-                    #c0c0c0 0px,
-                    #c0c0c0 1px,
-                    transparent 1px,
-                    transparent 100px
-                );
+                repeating-linear-gradient(to right, #b0b0b0 0px, #b0b0b0 1px, transparent 1px, transparent 20px),
+                repeating-linear-gradient(to bottom, #b0b0b0 0px, #b0b0b0 1px, transparent 1px, transparent 20px),
+                repeating-linear-gradient(to right, #c0c0c0 0px, #c0c0c0 1px, transparent 1px, transparent 100px),
+                repeating-linear-gradient(to bottom, #c0c0c0 0px, #c0c0c0 1px, transparent 1px, transparent 100px);
             font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
         }
 
@@ -55,7 +31,7 @@
             font-size: 2rem;
             font-weight: 500;
             color: #2c2c2c;
-            background-color: rgba(255, 255, 255, 0.75);
+            background-color: rgba(255, 255, 255, 0.85);
             padding: 8px 24px;
             border-radius: 0;
             letter-spacing: 0.5px;
@@ -63,9 +39,23 @@
             border: 1px solid #ddd;
         }
 
-        .ubuntu-btn {
+        /* 按钮容器 */
+        .btn-container {
+            position: relative;
+            display: flex;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+            transition: box-shadow 0.15s ease;
+        }
+
+        .btn-container:hover {
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+        }
+
+        /* 左侧主下载按钮 */
+        .main-download-btn {
             background-color: #ffffff;
             border: 1px solid #333;
+            border-right: none;
             border-radius: 0;
             padding: 16px 32px;
             font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
@@ -73,32 +63,149 @@
             font-weight: 500;
             color: #1e1e1e;
             letter-spacing: 0.3px;
-            text-align: center;
             cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
-            transition: background-color 0.15s ease, box-shadow 0.15s ease;
-            position: relative;
-            z-index: 2;
+            transition: background-color 0.15s ease;
         }
 
-        .ubuntu-btn:hover {
+        .main-download-btn:hover {
             background-color: #f0f0f0;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+        }
+        
+        .main-download-btn:active {
+            background-color: #e8e8e8;
         }
 
-        .ubuntu-btn:active {
+        /* 右侧切换源按钮 */
+        .toggle-source-btn {
+            background-color: #ffffff;
+            border: 1px solid #333;
+            border-radius: 0;
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
+
+        .toggle-source-btn:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .toggle-source-btn:active {
             background-color: #e8e8e8;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            transform: scale(0.99);
+        }
+
+        /* 顺时针旋转90度的 > 图标 */
+        .arrow {
+            display: inline-block;
+            font-weight: bold;
+            font-family: monospace;
+            font-size: 1.2rem;
+            color: #333;
+            transition: transform 0.2s ease;
+        }
+
+        .btn-container.open .arrow {
+            transform: rotate(90deg);
+        }
+
+        /* 下拉菜单面板 */
+        .source-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: rgba(255, 255, 255, 0.95);
+            border: 1px solid #333;
+            border-top: none;
+            padding: 10px 0;
+            margin-top: 1px;
+            display: none;
+            flex-direction: column;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            min-width: 100%;
+            z-index: 10;
+        }
+
+        .btn-container.open .source-dropdown {
+            display: flex;
+        }
+
+        /* 菜单项：基础样式（默认灰色，无背景） */
+        .source-dropdown a {
+            text-decoration: none;
+            color: #555;
+            font-size: 0.95rem;
+            font-family: monospace;
+            padding: 10px 20px;
+            white-space: nowrap;
+            background-color: transparent;
+            transition: font-style 0.15s;
+        }
+
+        /* 光标停留：未选中的项变斜体 */
+        .source-dropdown a:hover {
+            font-style: italic;
+        }
+
+        /* 当前选中项：仅加粗 */
+        .source-dropdown a.active {
+            font-weight: bold;
+        }
+
+        /* 已选中的项，鼠标悬停时仍然保持粗体，且不变成斜体 */
+        .source-dropdown a.active:hover {
+            font-style: normal;
         }
     </style>
 </head>
 <body>
     <h1 class="page-heading">Ubuntu 22.04.5 LTS (Desktop)</h1>
 
-    <!-- 点击按钮download-->
-     <button class="ubuntu-btn" type="button" onclick="window.location.href='https://mirrors.tuna.tsinghua.edu.cn/ubuntu-releases/22.04.5/ubuntu-22.04.5-desktop-amd64.iso';">
-    ubuntu-22.04.5-desktop-amd64
-    </button>
+    <div class="btn-container" id="btnGroup">
+        <button class="main-download-btn" id="downloadBtn" onclick="triggerDownload()">
+            ubuntu-22.04.5-desktop-amd64
+        </button>
+
+        <button class="toggle-source-btn" onclick="toggleDropdown(event)">
+            <span class="arrow">&gt;</span>
+        </button>
+
+        <div class="source-dropdown" id="dropdownMenu">
+            <a href="javascript:void(0)" class="active" onclick="changeSource(this, 'https://mirror.sysu.edu.cn/ubuntu-releases/22.04.5/ubuntu-22.04.5-desktop-amd64.iso')">SYSU</a>
+            <a href="javascript:void(0)" onclick="changeSource(this, 'https://mirrors.ustc.edu.cn/ubuntu-releases/22.04.5/ubuntu-22.04.5-desktop-amd64.iso')">USTC</a>
+            <a href="javascript:void(0)" onclick="changeSource(this, 'https://mirrors.aliyun.com/ubuntu-releases/22.04.5/ubuntu-22.04.5-desktop-amd64.iso')">Aliyun</a>
+            <a href="javascript:void(0)" onclick="changeSource(this, 'https://mirrors.tuna.tsinghua.edu.cn/ubuntu-releases/22.04.5/ubuntu-22.04.5-desktop-amd64.iso')">TUNA</a>
+            <a href="javascript:void(0)" onclick="changeSource(this, 'https://mirrors.nju.edu.cn/ubuntu-releases/22.04.5/ubuntu-22.04.5-desktop-amd64.iso')">NJU</a>
+        </div>
+    </div>
+
+    <script>
+        let currentDownloadUrl = 'https://mirror.sysu.edu.cn/ubuntu-releases/22.04.5/ubuntu-22.04.5-desktop-amd64.iso';
+
+        function toggleDropdown(event) {
+            event.stopPropagation(); 
+            const btnGroup = document.getElementById('btnGroup');
+            btnGroup.classList.toggle('open');
+        }
+
+        document.addEventListener('click', function(event) {
+            const btnGroup = document.getElementById('btnGroup');
+            if (!btnGroup.contains(event.target)) {
+                btnGroup.classList.remove('open');
+            }
+        });
+
+        function changeSource(element, url) {
+            currentDownloadUrl = url;
+            const links = document.querySelectorAll('.source-dropdown a');
+            links.forEach(link => link.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        function triggerDownload() {
+            window.open(currentDownloadUrl, '_blank');
+        }
+    </script>
 </body>
 </html>
